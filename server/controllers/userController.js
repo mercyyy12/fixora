@@ -1,0 +1,161 @@
+const User = require('../models/User');
+const { uploadProfileImage } = require('../config/cloudinary');
+
+// @desc    Get all technicians (for homeowner to browse)
+// @route   GET /api/users/technicians
+// @access  Private
+const getTechnicians = async (req, res, next) => {
+  try {
+    const { skill, page = 1, limit = 10 } = req.query;
+    const query = { role: 'technician' };
+
+    if (skill) query.skills = { $in: [new RegExp(skill, 'i')] };
+
+    const total = await User.countDocuments(query);
+    const technicians = await User.find(query)
+      .select('-password -notifications')
+      .sort({ 'rating.average': -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    res.json({ success: true, total, technicians });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get a single user profile
+// @route   GET /api/users/:id
+// @access  Private
+const getUserProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password -notifications');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    res.json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update current user's profile
+// @route   PUT /api/users/profile
+// @access  Private
+const updateProfile = async (req, res, next) => {
+  try {
+    const { name, phone, bio, skills, experience, address, isAvailable } = req.body;
+
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone !== undefined) updateData.phone = phone;
+    if (bio !== undefined) updateData.bio = bio;
+    if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
+    if (address) updateData['location.address'] = address;
+
+    if (req.user.role === 'technician') {
+      if (skills) {
+        updateData.skills = Array.isArray(skills) ? skills : skills.split(',').map((s) => s.trim());
+      }
+      if (experience !== undefined) updateData.experience = experience;
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, updateData, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
+
+    res.json({ success: true, message: 'Profile updated successfully', user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Upload profile image
+// @route   POST /api/users/profile/image
+// @access  Private
+const uploadImage = (req, res, next) => {
+  uploadProfileImage(req, res, async (err) => {
+    if (err) return res.status(400).json({ success: false, message: err.message });
+
+    try {
+      if (!req.file) return res.status(400).json({ success: false, message: 'No image provided' });
+
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { profileImage: req.file.path },
+        { new: true }
+      ).select('-password');
+
+      res.json({ success: true, message: 'Profile image updated', user });
+    } catch (error) {
+      next(error);
+    }
+  });
+};
+
+// @desc    Get user notifications
+// @route   GET /api/users/notifications
+// @access  Private
+const getNotifications = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('notifications');
+    const notifications = user.notifications.sort((a, b) => b.createdAt - a.createdAt);
+    res.json({ success: true, notifications });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Mark notifications as read
+// @route   PUT /api/users/notifications/read
+// @access  Private
+const markNotificationsRead = async (req, res, next) => {
+  try {
+    await User.updateOne(
+      { _id: req.user._id },
+      { $set: { 'notifications.$[].read': true } }
+    );
+    res.json({ success: true, message: 'Notifications marked as read' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get admin platform stats
+// @route   GET /api/users/admin/stats
+// @access  Private
+const getAdminStats = async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized as admin' });
+    }
+
+    const totalHomeowners = await User.countDocuments({ role: 'homeowner' });
+    const totalTechnicians = await User.countDocuments({ role: 'technician' });
+    const Job = require('../models/Job');
+    const totalJobs = await Job.countDocuments();
+    const openJobs = await Job.countDocuments({ status: 'Open' });
+
+    res.json({
+      success: true,
+      stats: {
+        totalHomeowners,
+        totalTechnicians,
+        totalJobs,
+        openJobs
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getTechnicians,
+  getUserProfile,
+  updateProfile,
+  uploadImage,
+  getNotifications,
+  markNotificationsRead,
+  getAdminStats,
+};
