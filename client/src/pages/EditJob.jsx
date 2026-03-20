@@ -46,6 +46,7 @@ const EditJob = () => {
 
   // Existing images from DB
   const [existingImages, setExistingImages] = useState([]);
+  const [removedImages, setRemovedImages]   = useState([]);
 
   // New images selected by user
   const [newFiles, setNewFiles]     = useState([]);
