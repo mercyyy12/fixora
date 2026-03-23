@@ -3,98 +3,156 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+    * {
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    }
 
-  html {
-    scroll-behavior: smooth;
-  }
+    html {
+        scroll-behavior: smooth;
+    }
 
-  body {
-    @apply font-body text-ink bg-canvas transition-colors duration-300;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+    body {
+        @apply font-body text-ink bg-canvas transition-colors duration-300;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display text-ink;
-  }
-  
-  p {
-    @apply text-ink-2;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display text-ink;
+    }
 
-  a {
-    @apply text-brand transition-colors;
-  }
-  a:hover {
-    @apply text-brand-hover;
-  }
+    p {
+        @apply text-ink-2;
+    }
+
+    a {
+        @apply text-brand transition-colors;
+    }
+
+    a:hover {
+        @apply text-brand-hover;
+    }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-brand hover:bg-brand-hover text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
-  }
+    .btn-primary {
+        @apply bg-brand hover:bg-brand-hover text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
+    }
 
-  .btn-secondary {
-    @apply bg-surface border border-outline hover:bg-canvas-alt text-ink font-semibold px-5 py-2.5 rounded-xl transition-all duration-200;
-  }
+    .btn-secondary {
+        @apply bg-surface border border-outline hover:bg-canvas-alt text-ink font-semibold px-5 py-2.5 rounded-xl transition-all duration-200;
+    }
 
-  .card {
-    @apply bg-surface rounded-xl shadow-sm border border-outline transition-shadow duration-200;
-  }
-  .card:hover {
-    @apply shadow-md border-outline-subtle;
-  }
+    .card {
+        @apply bg-surface rounded-xl shadow-sm border border-outline transition-shadow duration-200;
+    }
 
-  .input {
-    @apply w-full px-4 py-3 rounded-xl border border-outline bg-surface text-ink placeholder-ink-3 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all duration-200;
-  }
+    .card:hover {
+        @apply shadow-md border-outline-subtle;
+    }
 
-  .label {
-    @apply block text-sm font-semibold text-ink-2 mb-1.5 uppercase tracking-wider;
-  }
+    .input {
+        @apply w-full px-4 py-3 rounded-xl border border-outline bg-surface text-ink placeholder-ink-3 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all duration-200;
+    }
 
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
-  }
+    .label {
+        @apply block text-sm font-semibold text-ink-2 mb-1.5 uppercase tracking-wider;
+    }
 
-  .status-open        { @apply badge bg-teal-50 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300; }
-  .status-assigned    { @apply badge bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300; }
-  .status-in-progress { @apply badge bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300; }
-  .status-completed   { @apply badge bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300; }
-  .status-cancelled   { @apply badge bg-red-50 text-red-700 dark:bg-red-900/40 dark:text-red-300; }
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    }
 
-  .page-wrapper {
-    @apply min-h-screen bg-canvas transition-colors duration-300;
-  }
+    .status-open {
+        @apply badge bg-teal-50 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300;
+    }
+
+    .status-assigned {
+        @apply badge bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300;
+    }
+
+    .status-in-progress {
+        @apply badge bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300;
+    }
+
+    .status-completed {
+        @apply badge bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300;
+    }
+
+    .status-cancelled {
+        @apply badge bg-red-50 text-red-700 dark:bg-red-900/40 dark:text-red-300;
+    }
+
+    .page-wrapper {
+        @apply min-h-screen bg-canvas transition-colors duration-300;
+    }
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { @apply bg-gray-100 dark:bg-gray-800; }
-::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-600 rounded-full; }
-::-webkit-scrollbar-thumb:hover { @apply bg-brand; }
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-brand;
+}
 
 /* Fix Tailwind overriding Vanilla UI bounds */
-.map-grid-bg, .map-road-h, .map-road-v, .map-pin-label, .map-legend,
-.stack-card, .stack-card-head, .arch-node, .review-card, .price-card, .card,
-.dash-preview, .dash-bar, .dash-user, .dash-stat, .dash-job, .map-mock, input, button {
-  border-color: var(--border) !important;
+.map-grid-bg,
+.map-road-h,
+.map-road-v,
+.map-pin-label,
+.map-legend,
+.stack-card,
+.stack-card-head,
+.arch-node,
+.review-card,
+.price-card,
+.card,
+.dash-preview,
+.dash-bar,
+.dash-user,
+.dash-stat,
+.dash-job,
+.map-mock,
+input,
+button {
+    border-color: var(--border) !important;
 }
-.map-pin-dot, .dash-user-av {
-  border-color: var(--bg) !important;
+
+.map-pin-dot,
+.dash-user-av {
+    border-color: var(--bg) !important;
 }
+
 .btn-cta-outline {
-  border-color: rgba(255,255,255,0.5) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
 }
-.live-dot, .dash-job-dot, .legend-dot, .stack-dot {
-  border-color: transparent !important;
+
+.live-dot,
+.dash-job-dot,
+.legend-dot,
+.stack-dot {
+    border-color: transparent !important;
 }
 
 /* Fix CTA title that are forced black by tailwind typography rules in Light Mode */
-.cta-section h2, .cta-section p {
-  color: #ffffff !important;
+.cta-section h2,
+.cta-section p {
+    color: #ffffff !important;
 }
