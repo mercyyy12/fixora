@@ -14,6 +14,7 @@ fixora/
 ├── server/                       <- Node.js + Express backend
 │   ├── server.js                 <- Entry point
 │   ├── package.json
+│   ├── render.yaml               <- Render deployment config
 │   ├── config/
 │   │   ├── db.js                 <- MongoDB connection
 │   │   └── cloudinary.js         <- Cloudinary + Multer config
@@ -23,7 +24,7 @@ fixora/
 │   │   ├── Rating.js             <- Rating schema
 │   │   └── Report.js             <- Report schema
 │   ├── controllers/
-│   │   ├── authController.js
+│   │   ├── authController.js     <- Includes Admin Registration logic
 │   │   ├── jobController.js
 │   │   ├── userController.js
 │   │   ├── ratingController.js
@@ -40,7 +41,7 @@ fixora/
 │   ├── socket/
 │   │   └── socketHandler.js      <- Socket.io real-time events
 │   └── fixora-analytics/         <- Go analytics microservice
-│       ├── main.go
+│       ├── main.go               <- High-speed MongoDB aggregations
 │       ├── go.mod
 │       └── go.sum
 │
@@ -69,13 +70,18 @@ fixora/
         │   ├── admin/             <- Admin moderation components
         │   │   ├── AdminSettings.jsx
         │   │   ├── JobManagement.jsx
+        │   │   ├── RatingsManagement.jsx
         │   │   ├── ReportSystem.jsx
-        │   │   └── StatsOverview.jsx
+        │   │   ├── StatsOverview.jsx
+        │   │   ├── TechnicianManagement.jsx
+        │   │   ├── UserManagement.jsx
+        │   │   └── UserRatingsModal.jsx
         │   ├── Navbar.jsx
         │   ├── Loader.jsx
         │   ├── JobCard.jsx
         │   ├── TechnicianCard.jsx
         │   ├── LeafletMap.jsx     <- Interactive Map
+        │   ├── MockMap.jsx        <- Map placeholder for Job Detail
         │   └── StarRating.jsx
         └── pages/
             ├── Landing.jsx
@@ -86,6 +92,7 @@ fixora/
             ├── JobList.jsx
             ├── JobDetail.jsx
             ├── CreateJob.jsx
+            ├── EditJob.jsx        <- Full job editing with image management
             ├── Profile.jsx
             ├── Technicians.jsx
             └── TechnicianProfile.jsx
@@ -181,100 +188,53 @@ cd server/fixora-analytics && go run main.go
 
 ---
 
+## Administrative Access
+
+To access moderation tools:
+1. Navigate to the **Registration** page.
+2. Select **"Admin"** as the role.
+3. You must provide the `ADMIN_SECRET_KEY` (Default: `FIXORA_ADMIN_SECRET_2026`).
+4. Once logged in, visit `/admin-fixora-dashboard` to view statistics and manage reports.
+
+---
+
 ## API Endpoints
 
-### Auth
+### Core API (Node.js)
 | Method | Route | Access | Description |
 |--------|-------|--------|-------------|
-| POST | `/api/auth/register` | Public | Register user |
-| POST | `/api/auth/login` | Public | Login |
-| GET | `/api/auth/me` | Private | Get current user |
-
-### Jobs
-| Method | Route | Access | Description |
-|--------|-------|--------|-------------|
+| POST | `/api/auth/register` | Public | Register (Homeowner, Technician, or Admin) |
+| GET | `/api/auth/me` | Private | Get current user profile |
 | GET | `/api/jobs` | Private | List jobs (filtered by role) |
 | POST | `/api/jobs` | Homeowner | Create job |
-| GET | `/api/jobs/:id` | Private | Get job detail |
-| PUT | `/api/jobs/:id/accept` | Technician | Accept a job |
-| PUT | `/api/jobs/:id/status` | Technician | Update status |
-| DELETE | `/api/jobs/:id` | Homeowner | Delete open job |
+| POST | `/api/ratings` | Homeowner | Submit feedback for a technician |
+| GET | `/api/reports` | Admin | Review platform reports |
+| PUT | `/api/reports/:id` | Admin | Update report status |
 
-### Users and Admin
+### Analytics API (Go Microservice)
 | Method | Route | Access | Description |
 |--------|-------|--------|-------------|
-| GET | `/api/users/technicians` | Private | List technicians |
-| GET | `/api/users/:id` | Private | Get user profile |
-| PUT | `/api/users/profile` | Private | Update profile |
-| POST | `/api/reports` | Private | Submit a report |
-| GET | `/api/reports` | Admin | Review platform reports |
+| GET | `/api/admin/stats` | Admin | High-speed MongoDB stats aggregation |
+| GET | `/api/technicians` | Public | Optimized technician listing with filtering |
 
 ---
 
-## Socket.io Events
+## Key Features
 
-| Event | Direction | Description |
-|-------|-----------|-------------|
-| `join` | Client -> Server | Join personal notification room |
-| `join:technicians` | Client -> Server | Join technician broadcast room |
-| `job:new` | Server -> Technicians | New job posted |
-| `job:accepted` | Server -> Homeowner | Technician accepted their job |
-| `job:statusUpdate` | Server -> Homeowner | Job status changed |
+### Geolocation & Maps
+- **Leaflet.js**: Used in `CreateJob` and `EditJob` for interactive location picking via OpenStreetMap.
+- **Reverse Geocoding**: Automatically detects address names from map coordinates.
+- **Mock Integration**: Uses placeholders for job details to minimize API load.
 
----
+### Real-Time Interactions
+- **Socket.io**: Real-time job status updates and notification broadcasting.
+- Bidirectional feedback loop for homeowners and technicians.
 
-## Map Integration
-
-The application uses Leaflet.js with OpenStreetMap for geolocation and map visualization.
-It supports:
-- Pinpointing job locations
-- Displaying nearby technicians
-- Interactive location selection for job creation
-
----
-
-## Cloudinary Setup
-
-1. Sign up free at https://cloudinary.com
-2. Copy your Cloud Name, API Key, and API Secret from the dashboard
-3. Paste into `server/.env`
-
----
-
-## Dark Mode
-
-- Automatically follows system preference
-- Toggle button in Navbar
-- Persisted in localStorage
-- Full support across all components via Tailwind Dark Mode
-
----
-
-## Production Deployment
-
-**Backend (Railway, Render, etc.):**
-- Set environment variables
-- Entry point: `server/server.js`
-
-**Frontend (Vercel, Netlify):**
-- Build: `npm run build`
-- Deploy `client/build/` folder
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, Tailwind CSS, Framer Motion |
-| Backend | Node.js, Express |
-| Microservice | Go (net/http, mgo) |
-| Database | MongoDB, Mongoose |
-| Auth | JWT, bcryptjs |
-| Real-time | Socket.io |
-| File Upload | Multer, Cloudinary |
-| Routing | React Router v6 |
-| HTTP Client | Axios |
+### Production Readiness
+- **Render Support**: Includes `render.yaml` for instant deployment.
+- **Image Management**: Multiple image uploads per job via Multer and Cloudinary.
+- **Security**: JWT authentication with bcrypt password hashing and Admin registration guards.
+- **Dark Mode**: Full support across all components via Tailwind Dark Mode.
 
 ---
 
