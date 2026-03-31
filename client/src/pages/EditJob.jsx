@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiPhotograph, HiLocationMarker,
-  HiX, HiCursorClick, HiCheckCircle, HiRefresh,
+  HiX, HiCursorClick, HiCheckCircle, HiRefresh, HiArrowLeft, HiChevronDown,
 } from 'react-icons/hi';
 import API from '../utils/api';
 import LeafletMap from '../components/LeafletMap';
@@ -223,7 +223,7 @@ const EditJob = () => {
         {/* Header */}
         <div className="mb-6">
           <Link to={`/jobs/${id}`} className="text-sm text-ink-2 hover:text-brand-600 dark:hover:text-brand-400 mb-3 inline-flex items-center gap-1 transition-colors">
-            ← Back to Job
+            <HiArrowLeft className="w-4 h-4" /> Back to Job
           </Link>
           <h1 className="font-display font-bold text-2xl text-ink">Edit Job</h1>
           <p className="text-sm text-ink-2 mt-0.5">
@@ -330,7 +330,7 @@ const EditJob = () => {
               {/* Manual coords */}
               <details className="group">
                 <summary className="text-xs text-ink-3 dark:text-ink-2 cursor-pointer hover:text-ink-2 dark:hover:text-gray-300 select-none flex items-center gap-1 list-none">
-                  <span className="transition-transform group-open:rotate-90 inline-block leading-none">▶</span>
+                  <HiChevronDown className="transition-transform group-open:rotate-180 inline-block w-4 h-4" />
                   Edit coordinates manually
                 </summary>
                 <div className="grid grid-cols-2 gap-3 mt-3">
@@ -397,7 +397,7 @@ const EditJob = () => {
               {/* Existing images */}
               {existingImages.length > 0 && (
                 <div className="mb-3">
-                  <p className="text-xs text-ink-2 mb-2">Current photos — click ✕ to remove</p>
+                  <p className="text-xs text-ink-2 mb-2">Current photos — click X to remove</p>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                     {existingImages.map((url, i) => (
                       <div key={i} className="relative group">

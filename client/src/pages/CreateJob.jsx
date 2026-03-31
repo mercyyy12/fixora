@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiPhotograph, HiLocationMarker,
-  HiX, HiCursorClick, HiCheckCircle, HiRefresh,
+  HiX, HiCursorClick, HiCheckCircle, HiRefresh, HiChevronDown,
 } from 'react-icons/hi';
 import API from '../utils/api';
 import LeafletMap from '../components/LeafletMap';
@@ -307,7 +307,7 @@ const CreateJob = () => {
               {/* Manual coordinates — collapsed by default */}
               <details className="group">
                 <summary className="text-xs text-ink-3 dark:text-ink-2 cursor-pointer hover:text-ink-2 dark:hover:text-gray-300 select-none flex items-center gap-1 list-none">
-                  <span className="transition-transform group-open:rotate-90 inline-block leading-none">▶</span>
+                  <HiChevronDown className="transition-transform group-open:rotate-180 inline-block w-4 h-4" />
                   Enter coordinates manually
                 </summary>
                 <div className="grid grid-cols-2 gap-3 mt-3">

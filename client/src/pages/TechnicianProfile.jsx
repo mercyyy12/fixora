@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiStar, HiBriefcase, HiPhone, HiMail, HiCheckCircle, HiLocationMarker, HiFlag } from 'react-icons/hi';
+import { HiStar, HiBriefcase, HiPhone, HiMail, HiCheckCircle, HiLocationMarker, HiFlag, HiArrowLeft, HiXCircle } from 'react-icons/hi';
 import API from '../utils/api';
 import StarRating from '../components/StarRating';
 import Loader from '../components/Loader';
@@ -65,7 +65,7 @@ const TechnicianProfile = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         {/* Back */}
         <button onClick={() => navigate(-1)} className="text-sm text-ink-2 hover:text-brand-600 dark:hover:text-brand-400 mb-5 flex items-center gap-1 transition-colors">
-          ← Back
+          <HiArrowLeft className="w-4 h-4" /> Back
         </button>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -86,12 +86,16 @@ const TechnicianProfile = () => {
               <h1 className="font-display font-bold text-xl text-ink">{tech.name}</h1>
 
               {/* Availability badge */}
-              <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold ${
+              <span className={`inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-xs font-semibold ${
                 tech.isAvailable
                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
                   : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
               }`}>
-                {tech.isAvailable ? '● Available for work' : '○ Currently unavailable'}
+                {tech.isAvailable ? (
+                  <><HiCheckCircle className="w-3.5 h-3.5" /> Available for work</>
+                ) : (
+                  <><HiXCircle className="w-3.5 h-3.5" /> Currently unavailable</>
+                )}
               </span>
 
               {/* Rating */}

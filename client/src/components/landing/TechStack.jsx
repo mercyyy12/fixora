@@ -90,7 +90,12 @@ export default function TechStack() {
           <div className="arch-nodes">
             {ARCH_NODES.map((n, i) =>
               n.arrow ? (
-                <div key={i} className="arch-arrow">{n.arrow}</div>
+                <div key={i} className="arch-arrow">
+                  {n.arrow === '→' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>}
+                  {n.arrow === '⇄' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/><polyline points="17 14 12 9 7 14"/><line x1="12" y1="9" x2="12" y2="21"/></svg>}
+                  {n.arrow === '↓' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>}
+                  {n.arrow === '↔' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><polyline points="7 8 2 12 7 16"/><polyline points="17 16 22 12 17 8"/><line x1="2" y1="12" x2="22" y2="12"/></svg>}
+                </div>
               ) : (
                 <div key={n.name} className="arch-node">
                   <div className="arch-node-name" style={n.color ? { color: n.color } : {}}>

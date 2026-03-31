@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { HiBriefcase, HiEye, HiEyeOff, HiLockClosed, HiMail, HiPhone, HiUser } from 'react-icons/hi';
+import { HiBriefcase, HiEye, HiEyeOff, HiLockClosed, HiMail, HiPhone, HiUser, HiHome, HiWrench, HiShieldCheck } from 'react-icons/hi';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -54,7 +54,7 @@ const Register = () => {
                 skills: form.skills,
                 adminSecret: form.adminSecret,
             });
-            toast.success('Account created! Welcome to Fixora 🎉');
+            toast.success('Account created! Welcome to Fixora');
             navigate('/dashboard');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Registration failed');
@@ -102,13 +102,21 @@ const Register = () => {
                                         : 'text-ink-2 hover:text-ink-2 dark:hover:text-gray-200'
                                         }`}
                                 >
-                                    {r === 'homeowner' ? '🏠 Homeowner' : '🔧 Technician'}
+                                    {r === 'homeowner' ? (
+                                        <span className="flex items-center justify-center gap-1.5 transform transition-transform duration-200 group-hover:scale-105">
+                                            <HiHome className="w-4 h-4" /> Homeowner
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center justify-center gap-1.5 transform transition-transform duration-200 group-hover:scale-105">
+                                            <HiWrench className="w-4 h-4" /> Technician
+                                        </span>
+                                    )}
                                 </button>
                             ))}
                         </div>
                     ) : (
                         <div className="flex items-center gap-2 mb-6 p-3 bg-canvas-alt rounded-xl">
-                            <span className="text-lg">🛡️</span>
+                            <HiShieldCheck className="w-6 h-6 text-brand-500" />
                             <div>
                                 <div className="text-sm font-semibold text-ink">Platform Administrator</div>
                                 <div className="text-xs text-ink-3">Restricted access — requires secret key</div>

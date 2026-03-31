@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiLocationMarker, HiClock, HiTrash, HiStar, HiRefresh, HiPencil, HiFlag } from 'react-icons/hi';
+import { HiLocationMarker, HiClock, HiTrash, HiStar, HiRefresh, HiPencil, HiFlag, HiArrowLeft } from 'react-icons/hi';
 import API from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
@@ -16,7 +16,7 @@ const statusTransitions = { Assigned: 'In Progress', 'In Progress': 'Completed' 
 const JobDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const { jobUpdate } = useSocket();   // ← watch for live updates
+  const { jobUpdate } = useSocket();   // watch for live updates
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -152,7 +152,7 @@ const JobDetail = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         {/* Back */}
         <Link to="/jobs" className="inline-flex items-center gap-1.5 text-sm text-ink-2 hover:text-brand-600 dark:hover:text-brand-400 mb-5 transition-colors">
-          ← Back to Jobs
+          <HiArrowLeft className="w-4 h-4" /> Back to Jobs
         </Link>
 
         {/* Live indicator */}

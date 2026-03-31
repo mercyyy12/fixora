@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiPlus, HiClipboardList, HiCheckCircle, HiClock, HiUsers, HiRefresh } from 'react-icons/hi';
+import { HiPlus, HiClipboardList, HiCheckCircle, HiClock, HiUsers, HiRefresh, HiArrowRight, HiStar } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import API from '../utils/api';
@@ -96,7 +96,12 @@ const Dashboard = () => {
         { icon: HiClipboardList, label: 'Jobs Accepted',      value: myJobs.length,                                                                  color: 'bg-brand'   },
         { icon: HiClock,         label: 'In Progress',        value: myJobs.filter((j) => j.status === 'In Progress').length,                        color: 'bg-amber-500'   },
         { icon: HiCheckCircle,   label: 'Completed by Me',    value: myJobs.filter((j) => j.status === 'Completed').length,                          color: 'bg-emerald-500' },
-        { icon: HiUsers,         label: 'My Rating',          value: user?.rating?.average > 0 ? `${user.rating.average.toFixed(1)}★` : '—',        color: 'bg-purple-500'  },
+        { icon: HiUsers,         label: 'My Rating',          value: user?.rating?.average > 0 ? (
+          <span className="flex items-center gap-1">
+            {user.rating.average.toFixed(1)}
+            <HiStar className="w-5 h-5 text-amber-400 fill-current" />
+          </span>
+        ) : '—',        color: 'bg-purple-500'  },
       ];
 
   if (loading) return <Loader />;
@@ -141,8 +146,8 @@ const Dashboard = () => {
             <h2 className="font-display font-bold text-lg text-ink">
               My Active Jobs
             </h2>
-            <Link to="/jobs?tab=mine" className="text-sm text-brand hover:text-brand-hover font-semibold hover:underline">
-              View all →
+            <Link to="/jobs?tab=mine" className="text-sm text-brand hover:text-brand-hover font-semibold hover:underline flex items-center gap-1">
+              View all <HiArrowRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -159,8 +164,8 @@ const Dashboard = () => {
           <h2 className="font-display font-bold text-lg text-ink">
             {isAdmin ? 'Recent Platform Hub' : isHomeowner ? 'Recent Jobs' : 'Open Jobs Near You'}
           </h2>
-          <Link to="/jobs" className="text-sm text-brand hover:text-brand-hover font-semibold hover:underline">
-            View all →
+          <Link to="/jobs" className="text-sm text-brand hover:text-brand-hover font-semibold hover:underline flex items-center gap-1">
+            View all <HiArrowRight className="w-4 h-4" />
           </Link>
         </div>
 

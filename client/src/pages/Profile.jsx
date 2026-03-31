@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { HiCamera, HiPencil, HiCheck, HiX, HiStar, HiBriefcase, HiPhone, HiFlag } from 'react-icons/hi';
+import { HiCamera, HiPencil, HiCheck, HiX, HiStar, HiBriefcase, HiPhone, HiFlag, HiShieldCheck, HiCheckCircle, HiXCircle } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
 import StarRating from '../components/StarRating';
@@ -98,13 +98,21 @@ const Profile = () => {
                   {user?.role}
                 </span>
                 {isAdmin && (
-                  <span className="badge bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">
-                    🛡️ System Administrator
+                  <span className="badge bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 flex items-center gap-1">
+                    <HiShieldCheck className="w-3.5 h-3.5" /> System Administrator
                   </span>
                 )}
                 {isTech && (
                   <span className={`badge ${user.isAvailable ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
-                    {user.isAvailable ? '● Available' : '○ Unavailable'}
+                    {user.isAvailable ? (
+                      <span className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" /> Available
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-red-500" /> Unavailable
+                      </span>
+                    )}
                   </span>
                 )}
               </div>
@@ -199,7 +207,15 @@ const Profile = () => {
                       </label>
                     ) : (
                       <p className="text-ink-2 py-2">
-                        {user?.isAvailable ? '✅ Available' : '❌ Unavailable'}
+                        {user?.isAvailable ? (
+                          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                            <HiCheckCircle className="w-4 h-4" /> Available
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-red-600 dark:text-red-400 font-medium">
+                            <HiXCircle className="w-4 h-4" /> Unavailable
+                          </span>
+                        )}
                       </p>
                     )}
                   </div>

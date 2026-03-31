@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiSearch, HiFilter, HiPlus, HiRefresh } from 'react-icons/hi';
+import { HiSearch, HiFilter, HiPlus, HiRefresh, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import API from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
@@ -207,9 +207,9 @@ const JobList = () => {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="btn-secondary px-4 py-2 text-sm disabled:opacity-40"
+            className="btn-secondary px-3 py-2 text-sm disabled:opacity-40 flex items-center gap-1"
           >
-            ← Prev
+            <HiChevronLeft className="w-4 h-4" /> Prev
           </button>
           <span className="text-sm text-ink-2 font-medium">
             Page {page} of {totalPages}
@@ -217,9 +217,9 @@ const JobList = () => {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="btn-secondary px-4 py-2 text-sm disabled:opacity-40"
+            className="btn-secondary px-3 py-2 text-sm disabled:opacity-40 flex items-center gap-1"
           >
-            Next →
+            Next <HiChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}
