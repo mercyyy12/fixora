@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiLocationMarker, HiClock, HiTrash, HiStar, HiRefresh, HiPencil } from 'react-icons/hi';
+import { HiLocationMarker, HiClock, HiTrash, HiStar, HiRefresh, HiPencil, HiFlag } from 'react-icons/hi';
 import API from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
@@ -27,6 +27,30 @@ const JobDetail = () => {
   const [showRating, setShowRating] = useState(false);
   const [ratingScore, setRatingScore] = useState(0);
   const [ratingComment, setRatingComment] = useState('');
+
+  // Report state
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportForm, setReportForm] = useState({ reason: 'Fraud', description: '' });
+  const [submittingReport, setSubmittingReport] = useState(false);
+
+  const handleReport = async (e) => {
+    e.preventDefault();
+    setSubmittingReport(true);
+    try {
+      const reportedUser = isHomeowner ? job.technician?._id : job.homeowner?._id;
+      await API.post('/reports', {
+        reportedUser,
+        reason: reportForm.reason,
+        description: reportForm.description
+      });
+      toast.success('Report submitted successfully');
+      setShowReportModal(false);
+    } catch (err) {
+      toast.error('Failed to submit report');
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
 
   const fetchJob = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -98,11 +122,16 @@ const JobDetail = () => {
 
   const handleRatingSubmit = async (e) => {
     e.preventDefault();
-    if (!ratingScore) return toast.error('Please select a star rating');
     try {
-      await API.post('/ratings', { jobId: id, score: ratingScore, comment: ratingComment });
+      const ratedUserId = isHomeowner ? job.technician?._id : job.homeowner?._id;
+      await API.post('/ratings', { 
+        jobId: id, 
+        score: ratingScore, 
+        comment: ratingComment, 
+        ratedUserId 
+      });
       toast.success('Thank you for your review!');
-      setJob((prev) => ({ ...prev, isRated: true }));
+      setJob((prev) => ({ ...prev, [`isRatedBy${isHomeowner ? 'Homeowner' : 'Tech'}`]: true }));
       setShowRating(false);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to submit rating');
@@ -298,8 +327,8 @@ const JobDetail = () => {
                 </motion.button>
               )}
 
-              {/* Homeowner: Rate after completion */}
-              {isHomeowner && isJobOwner && job.status === 'Completed' && !job.isRated && (
+              {/* Homeowner: Rate Tech after completion */}
+              {isHomeowner && isJobOwner && job.status === 'Completed' && !job.isRatedByHomeowner && (
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setShowRating(true)}
@@ -308,11 +337,33 @@ const JobDetail = () => {
                   <HiStar className="w-5 h-5" /> Rate Technician
                 </motion.button>
               )}
-              {job.isRated && (
+
+              {/* Technician: Rate Homeowner after completion */}
+              {isTechnician && isAssignedTech && job.status === 'Completed' && !job.isRatedByTech && (
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setShowRating(true)}
+                  className="btn-primary w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 border-purple-600 hover:border-purple-700 shadow-purple-500/20"
+                >
+                  <HiStar className="w-5 h-5" /> Rate Homeowner
+                </motion.button>
+              )}
+
+              {(isHomeowner ? job.isRatedByHomeowner : job.isRatedByTech) && (
                 <div className="card p-3 text-center text-sm text-emerald-600 dark:text-emerald-400 font-medium">
                   You've rated this job
                 </div>
               )}
+
+              {/* Report Button */}
+              {(isHomeowner && job.technician) || (isTechnician && job.homeowner) ? (
+                <button 
+                  onClick={() => setShowReportModal(true)}
+                  className="w-full mt-2 flex items-center justify-center gap-2 text-xs font-bold text-red-500 hover:text-red-600 border border-red-500/10 hover:border-red-500/30 py-3 rounded-xl transition-all"
+                >
+                  <HiFlag className="w-3.5 h-3.5" /> Report Issues
+                </button>
+              ) : null}
             </div>
 
             {/* Rating form */}
@@ -344,6 +395,62 @@ const JobDetail = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="card w-full max-w-md p-6">
+            <h3 className="font-display font-bold text-xl text-ink mb-2">Report Issue</h3>
+            <p className="text-sm text-ink-3 mb-6">Describe the problem with this {isHomeowner ? 'technician' : 'homeowner'}.</p>
+            
+            <form onSubmit={handleReport} className="space-y-4">
+              <div>
+                <label className="label">Reason</label>
+                <select 
+                  className="input" 
+                  value={reportForm.reason}
+                  onChange={(e) => setReportForm({...reportForm, reason: e.target.value})}
+                >
+                  <option value="Fraud">Fraud / Scams</option>
+                  <option value="Abuse">Harassment / Abuse</option>
+                  <option value="Poor Quality">Poor Work Quality</option>
+                  <option value="Late">Extremely Late</option>
+                  <option value="No Show">Did not show up</option>
+                  <option value="Safety">Safety Concern</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="label">Description</label>
+                <textarea 
+                  className="input resize-none" 
+                  rows={4}
+                  required
+                  placeholder="Give us more details about what happened..."
+                  value={reportForm.description}
+                  onChange={(e) => setReportForm({...reportForm, description: e.target.value})}
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button 
+                  type="button" 
+                  onClick={() => setShowReportModal(false)}
+                  className="flex-1 btn-secondary py-3"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={submittingReport}
+                  className="flex-1 btn-primary py-3 bg-red-600 hover:bg-red-700 border-red-600 hover:border-red-700 shadow-red-500/20"
+                >
+                  {submittingReport ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

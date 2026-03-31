@@ -18,7 +18,8 @@ const Technicians = () => {
     try {
       const params = new URLSearchParams({ limit: 20 });
       if (skill !== 'All') params.append('skill', skill);
-      const { data } = await API.get(`/users/technicians?${params}`);
+      const res = await fetch(`http://localhost:6000/api/technicians?${params}`);
+      const data = await res.json();
       setTechnicians(data.technicians);
     } catch {
       // fail silently

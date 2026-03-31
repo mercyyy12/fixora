@@ -8,8 +8,14 @@ const {
   getNotifications,
   markNotificationsRead,
   getAdminStats,
+  getAllUsers,
+  adminUpdateUser,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
+
+// Admin routes (must come before /:id)
+router.get('/', protect, getAllUsers);            // GET /api/users — admin: all users
+router.patch('/:id', protect, adminUpdateUser);   // PATCH /api/users/:id — admin: update isVerified etc.
 
 router.get('/technicians', protect, getTechnicians);
 router.get('/notifications', protect, getNotifications);

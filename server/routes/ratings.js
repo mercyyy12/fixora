@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createRating, getTechnicianRatings } = require('../controllers/ratingController');
-const { protect, authorize } = require('../middleware/auth');
+const { createRating, getUserRatings, getAllRatings, deleteRating } = require('../controllers/ratingController');
+const { protect } = require('../middleware/auth');
 
-router.post('/', protect, authorize('homeowner'), createRating);
-router.get('/technician/:technicianId', getTechnicianRatings);
+router.get('/', protect, getAllRatings); // GET /api/ratings (Admin)
+router.post('/', protect, createRating);
+router.get('/user/:userId', getUserRatings);
+router.delete('/:id', protect, deleteRating); // DELETE /api/ratings/:id (Admin)
 
 module.exports = router;

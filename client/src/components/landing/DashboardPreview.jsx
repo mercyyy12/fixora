@@ -4,9 +4,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard', active: true,  badge: null, icon: <svg className="dash-nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg> },
   { label: 'My Jobs',   active: false, badge: null, icon: <svg className="dash-nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
   { label: 'Find Techs',active: false, badge: null, icon: <svg className="dash-nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
-  { label: 'Assets',    active: false, badge: null, icon: <svg className="dash-nav-icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> },
   { label: 'Reminders', active: false, badge: '3',  icon: <svg className="dash-nav-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> },
-  { label: 'Payments',  active: false, badge: null, icon: <svg className="dash-nav-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> },
 ]
 
 const STATS = [
@@ -33,7 +31,7 @@ export default function DashboardPreview() {
         <div className="section-header" ref={headerRef} data-reveal>
           <span className="label">Platform</span>
           <h2>Everything in one place</h2>
-          <p>A full dashboard to manage jobs, technicians, assets, and payments.</p>
+          <p>A full dashboard to manage jobs, technicians, and maintenance reminders.</p>
         </div>
 
         <div className="dash-preview" ref={previewRef} data-reveal="delay-1">
@@ -44,7 +42,7 @@ export default function DashboardPreview() {
               <div className="dash-bar-dot" /><div className="dash-bar-dot" /><div className="dash-bar-dot" />
             </div>
             <div className="dash-bar-tabs">
-              {['Dashboard','My Jobs','Technicians','Assets','Payments'].map((t,i) => (
+              {['Dashboard','My Jobs','Technicians','Reminders'].map((t,i) => (
                 <div key={t} className={`dash-bar-tab${i===0?' active':''}`}>{t}</div>
               ))}
             </div>

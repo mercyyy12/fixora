@@ -11,7 +11,8 @@ const Register = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const defaultRole = searchParams.get('role') === 'technician' ? 'technician' : 'homeowner';
+    const urlRole = searchParams.get('role');
+    const defaultRole = ['technician', 'admin'].includes(urlRole) ? urlRole : 'homeowner';
 
     const [form, setForm] = useState({
         name: '', email: '', password: '', confirmPassword: '',
@@ -88,21 +89,32 @@ const Register = () => {
 
                 <div className="card p-8">
                     {/* Role toggle */}
-                    <div className="flex bg-canvas-alt rounded-xl p-1 mb-6">
-                        {['homeowner', 'technician'].map((r) => (
-                            <button
-                                key={r}
-                                type="button"
-                                onClick={() => setForm({ ...form, role: r })}
-                                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 capitalize ${form.role === r
-                                    ? 'bg-white dark:bg-gray-700 text-brand hover:text-brand-hover shadow-sm'
-                                    : 'text-ink-2 hover:text-ink-2 dark:hover:text-gray-200'
-                                    }`}
-                            >
-                                {r === 'homeowner' ? '🏠 Homeowner' : r === 'technician' ? '🔧 Technician' : '🛡️ Admin'}
-                            </button>
-                        ))}
-                    </div>
+                    {/* Show role toggle only for non-admin registrations */}
+                    {form.role !== 'admin' ? (
+                        <div className="flex bg-canvas-alt rounded-xl p-1 mb-6">
+                            {['homeowner', 'technician'].map((r) => (
+                                <button
+                                    key={r}
+                                    type="button"
+                                    onClick={() => setForm({ ...form, role: r })}
+                                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 capitalize ${form.role === r
+                                        ? 'bg-white dark:bg-gray-700 text-brand hover:text-brand-hover shadow-sm'
+                                        : 'text-ink-2 hover:text-ink-2 dark:hover:text-gray-200'
+                                        }`}
+                                >
+                                    {r === 'homeowner' ? '🏠 Homeowner' : '🔧 Technician'}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2 mb-6 p-3 bg-canvas-alt rounded-xl">
+                            <span className="text-lg">🛡️</span>
+                            <div>
+                                <div className="text-sm font-semibold text-ink">Platform Administrator</div>
+                                <div className="text-xs text-ink-3">Restricted access — requires secret key</div>
+                            </div>
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -189,7 +201,7 @@ const Register = () => {
                                                     type="button"
                                                     onClick={() => toggleSkill(skill)}
                                                     className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${form.skills.includes(skill)
-                                                        ? 'bg-brand/100 border-brand-500 text-white'
+                                                        ? 'border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-500 line-through opacity-60'
                                                         : 'border-outline dark:border-gray-600 text-ink-2 hover:border-brand-400'
                                                         }`}
                                                 >
@@ -212,29 +224,29 @@ const Register = () => {
                             )}
                         </AnimatePresence>
 
-                        {/* Admin-only fields
-            <AnimatePresence>
-              {form.role === 'admin' && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-4 overflow-hidden"
-                >
-                  <div>
-                    <label className="label">Admin Secret Key *</label>
-                    <div className="relative">
-                      <HiLockClosed className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-3" />
-                      <input
-                        type="password"
-                        name="adminSecret" value={form.adminSecret} onChange={handleChange}
-                        placeholder="Required for platform administrators" className="input pl-11"
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence> */}
+                        {/* Admin-only fields */}
+                        <AnimatePresence>
+                            {form.role === 'admin' && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="space-y-4 overflow-hidden"
+                                >
+                                    <div>
+                                        <label className="label">Admin Secret Key *</label>
+                                        <div className="relative">
+                                            <HiLockClosed className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-3" />
+                                            <input
+                                                type="password"
+                                                name="adminSecret" value={form.adminSecret} onChange={handleChange}
+                                                placeholder="Required for platform administrators" className="input pl-11"
+                                            />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <motion.button
                             type="submit"

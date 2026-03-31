@@ -7,7 +7,7 @@ const { uploadProfileImage } = require('../config/cloudinary');
 const getTechnicians = async (req, res, next) => {
   try {
     const { skill, page = 1, limit = 10 } = req.query;
-    const query = { role: 'technician' };
+    const query = { role: 'technician', isVerified: true };
 
     if (skill) query.skills = { $in: [new RegExp(skill, 'i')] };
 
@@ -123,28 +123,101 @@ const markNotificationsRead = async (req, res, next) => {
 
 // @desc    Get admin platform stats
 // @route   GET /api/users/admin/stats
-// @access  Private
+// @access  Private (Admin)
 const getAdminStats = async (req, res, next) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Not authorized as admin' });
     }
 
-    const totalHomeowners = await User.countDocuments({ role: 'homeowner' });
-    const totalTechnicians = await User.countDocuments({ role: 'technician' });
-    const Job = require('../models/Job');
-    const totalJobs = await Job.countDocuments();
-    const openJobs = await Job.countDocuments({ status: 'Open' });
-
-    res.json({
-      success: true,
-      stats: {
-        totalHomeowners,
-        totalTechnicians,
-        totalJobs,
-        openJobs
-      }
+    const http = require('http');
+    const analyticsPort = process.env.ANALYTICS_PORT || 6000;
+    
+    const fetchGoStats = () => new Promise((resolve, reject) => {
+      const request = http.get(`http://localhost:${analyticsPort}/api/admin/stats`, (response) => {
+        if (response.statusCode !== 200) {
+          return reject(new Error('Status code: ' + response.statusCode));
+        }
+        let data = '';
+        response.on('data', chunk => data += chunk);
+        response.on('end', () => resolve(JSON.parse(data)));
+      });
+      request.on('error', reject);
+      request.setTimeout(2000, () => {
+        request.destroy();
+        reject(new Error('Request timed out'));
+      });
     });
+
+    try {
+      const stats = await fetchGoStats();
+      return res.json({ success: true, stats });
+    } catch (err) {
+      console.error('Go Analytics Service unavailable, falling back to local counts:', err.message);
+      
+      const totalHomeowners = await User.countDocuments({ role: 'homeowner' });
+      const totalTechnicians = await User.countDocuments({ role: 'technician' });
+      
+      const Job = require('../models/Job');
+      const totalActiveJobs = await Job.countDocuments({ status: { $in: ['Accepted', 'In Progress'] } });
+      const completedJobs = await Job.countDocuments({ status: 'Completed' });
+      
+      const pendingApprovals = await User.countDocuments({ role: 'technician', isVerified: false });
+      
+      const Report = require('../models/Report');
+      const reportsComplaints = await Report.countDocuments({ status: 'Pending' });
+
+      // Override real aggregation with requested fake placeholder data
+      const revenue = 1245000;
+
+      res.json({
+        success: true,
+        stats: {
+          totalUsers: totalHomeowners + totalTechnicians,
+          totalHomeowners,
+          totalTechnicians,
+          totalActiveJobs,
+          completedJobs,
+          pendingApprovals,
+          reportsComplaints,
+          revenue
+        }
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get ALL users (admin only)
+// @route   GET /api/users
+// @access  Private (Admin)
+const getAllUsers = async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+    const users = await User.find({}).select('-password -notifications').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Admin update a user (isVerified, isBlocked, etc.)
+// @route   PATCH /api/users/:id
+// @access  Private (Admin)
+const adminUpdateUser = async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+    const allowed = ['isVerified', 'isBlocked', 'role'];
+    const update = {};
+    allowed.forEach(k => { if (req.body[k] !== undefined) update[k] = req.body[k]; });
+    const user = await User.findByIdAndUpdate(req.params.id, update, { new: true }).select('-password');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.json({ success: true, user });
   } catch (error) {
     next(error);
   }
@@ -158,4 +231,6 @@ module.exports = {
   getNotifications,
   markNotificationsRead,
   getAdminStats,
+  getAllUsers,
+  adminUpdateUser,
 };

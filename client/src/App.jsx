@@ -17,6 +17,7 @@ import EditJob from './pages/EditJob';
 import Profile from './pages/Profile';
 import Technicians from './pages/Technicians';
 import TechnicianProfile from './pages/TechnicianProfile';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Components
 import Navbar from './components/Navbar';
@@ -67,6 +68,12 @@ const AppRoutes = () => {
         <Route
           path="/jobs/:id/edit"
           element={<ProtectedRoute roles={['homeowner']}><EditJob /></ProtectedRoute>}
+        />
+
+        {/* Admin only */}
+        <Route
+          path="/admin-fixora-dashboard/*"
+          element={<ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute>}
         />
 
         {/* Fallback */}

@@ -36,7 +36,12 @@ const Navbar = () => {
     { to: '/profile', label: 'Profile', icon: HiUser },
   ];
 
-  const links = user?.role === 'homeowner' ? homeownerLinks : technicianLinks;
+  const adminLinks = [
+    { to: '/admin-fixora-dashboard', label: 'Admin Panel', icon: HiUsers },
+    { to: '/profile', label: 'Profile', icon: HiUser },
+  ];
+
+  const links = user?.role === 'admin' ? adminLinks : user?.role === 'homeowner' ? homeownerLinks : technicianLinks;
 
   const isActive = (path) => location.pathname === path;
 

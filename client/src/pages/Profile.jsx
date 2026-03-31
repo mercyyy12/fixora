@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { HiCamera, HiPencil, HiCheck, HiX, HiStar, HiBriefcase, HiPhone } from 'react-icons/hi';
+import { HiCamera, HiPencil, HiCheck, HiX, HiStar, HiBriefcase, HiPhone, HiFlag } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
 import StarRating from '../components/StarRating';

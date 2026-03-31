@@ -79,12 +79,12 @@ const Dashboard = () => {
 
   // ── Stats ─────────────────────────────────────────────────────────────────
   const stats = isAdmin 
-    ? [
-        { icon: HiUsers,         label: 'Total Homeowners',   value: adminStats?.totalHomeowners || 0,        color: 'bg-emerald-500' },
-        { icon: HiUsers,         label: 'Total Technicians',  value: adminStats?.totalTechnicians || 0,       color: 'bg-blue-500' },
-        { icon: HiClipboardList, label: 'Lifetime Jobs',      value: adminStats?.totalJobs || 0,              color: 'bg-purple-500' },
-        { icon: HiClock,         label: 'Currently Open',     value: adminStats?.openJobs || 0,               color: 'bg-amber-500' },
-      ]
+      ? [
+          { icon: HiUsers,         label: 'Total Homeowners',   value: adminStats?.totalHomeowners || 0,        color: 'bg-emerald-500' },
+          { icon: HiUsers,         label: 'Total Technicians',  value: adminStats?.totalTechnicians || 0,       color: 'bg-blue-500' },
+          { icon: HiClipboardList, label: 'Total Active Jobs',  value: adminStats?.totalActiveJobs || 0,        color: 'bg-purple-500' },
+          { icon: HiClock,         label: 'Pending Reports',    value: adminStats?.reportsComplaints || 0,      color: 'bg-amber-500' },
+        ]
     : isHomeowner
     ? [
         { icon: HiClipboardList, label: 'Total Jobs Posted',  value: recentJobs.length,                                                              color: 'bg-brand'   },

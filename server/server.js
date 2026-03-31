@@ -49,6 +49,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/ratings', require('./routes/ratings'));
+app.use('/api/reports', require('./routes/reports'));
 
 // Health check
 app.get('/api/health', (_req, res) => res.json({ status: 'OK', message: 'Fixora API running' }));

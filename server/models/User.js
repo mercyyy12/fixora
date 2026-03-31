@@ -57,6 +57,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isVerified: {
+      type: Boolean,
+      default: false, // For technicians, default to false
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     rating: {
       average: { type: Number, default: 0 },
       count: { type: Number, default: 0 },

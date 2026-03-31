@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiStar, HiBriefcase, HiPhone, HiMail, HiCheckCircle, HiLocationMarker } from 'react-icons/hi';
+import { HiStar, HiBriefcase, HiPhone, HiMail, HiCheckCircle, HiLocationMarker, HiFlag } from 'react-icons/hi';
 import API from '../utils/api';
 import StarRating from '../components/StarRating';
 import Loader from '../components/Loader';
@@ -14,13 +14,35 @@ const TechnicianProfile = () => {
   const [tech, setTech] = useState(null);
   const [ratings, setRatings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportForm, setReportForm] = useState({ reason: 'Fraud', description: '' });
+  const [submittingReport, setSubmittingReport] = useState(false);
+
+  const handleReport = async (e) => {
+    e.preventDefault();
+    setSubmittingReport(true);
+    try {
+      await API.post('/reports', {
+        reportedUser: id,
+        reason: reportForm.reason,
+        description: reportForm.description
+      });
+      toast.success('Report submitted successfully');
+      setShowReportModal(false);
+      setReportForm({ reason: 'Fraud', description: '' });
+    } catch (err) {
+      toast.error('Failed to submit report');
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [userRes, ratingsRes] = await Promise.all([
           API.get(`/users/${id}`),
-          API.get(`/ratings/technician/${id}`),
+          API.get(`/ratings/user/${id}`),
         ]);
         setTech(userRes.data.user);
         setRatings(ratingsRes.data.ratings);
@@ -38,6 +60,7 @@ const TechnicianProfile = () => {
   if (!tech) return null;
 
   return (
+    <>
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         {/* Back */}
@@ -99,6 +122,13 @@ const TechnicianProfile = () => {
                     <span>{tech.location.address}</span>
                   </div>
                 )}
+                
+                <button 
+                  onClick={() => setShowReportModal(true)}
+                  className="w-full mt-4 flex items-center justify-center gap-2 text-xs font-bold text-red-500 hover:text-red-600 border border-red-500/20 hover:border-red-500/50 py-2 rounded-xl transition-all"
+                >
+                  <HiFlag className="w-3 h-3" /> Report Technician
+                </button>
               </div>
             </div>
 
@@ -161,16 +191,16 @@ const TechnicianProfile = () => {
                       className="border-b border-outline pb-4 last:border-0 last:pb-0"
                     >
                       <div className="flex items-start gap-3">
-                        {r.homeowner?.profileImage ? (
-                          <img src={r.homeowner.profileImage} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                        {r.rater?.profileImage ? (
+                          <img src={r.rater.profileImage} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
                         ) : (
                           <div className="w-9 h-9 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
-                            {r.homeowner?.name?.[0]?.toUpperCase()}
+                            {r.rater?.name?.[0]?.toUpperCase()}
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2 flex-wrap">
-                            <span className="font-semibold text-sm text-ink">{r.homeowner?.name}</span>
+                            <span className="font-semibold text-sm text-ink">{r.rater?.name}</span>
                             <span className="text-xs text-ink-3">{formatDistanceToNow(r.createdAt)}</span>
                           </div>
                           <StarRating value={r.score} readonly size="sm" />
@@ -191,6 +221,62 @@ const TechnicianProfile = () => {
         </div>
       </motion.div>
     </div>
+
+    {/* Report Modal */}
+    {showReportModal && (
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="card w-full max-w-md p-6">
+          <h3 className="font-display font-bold text-xl text-ink mb-2">Report User</h3>
+          <p className="text-sm text-ink-3 mb-6">Your report will be reviewed by Fixora administrators.</p>
+          
+          <form onSubmit={handleReport} className="space-y-4">
+            <div>
+              <label className="label">Reason</label>
+              <select 
+                className="input" 
+                value={reportForm.reason}
+                onChange={(e) => setReportForm({...reportForm, reason: e.target.value})}
+              >
+                <option value="Fraud">Fraud</option>
+                <option value="Abuse">Abuse</option>
+                <option value="Poor Quality">Poor Quality</option>
+                <option value="Late">Late</option>
+                <option value="No Show">No Show</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="label">Description</label>
+              <textarea 
+                className="input resize-none" 
+                rows={4}
+                required
+                placeholder="Give us more details about what happened..."
+                value={reportForm.description}
+                onChange={(e) => setReportForm({...reportForm, description: e.target.value})}
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button 
+                type="button" 
+                onClick={() => setShowReportModal(false)}
+                className="flex-1 btn-secondary py-3"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                disabled={submittingReport}
+                className="flex-1 btn-primary py-3 bg-red-600 hover:bg-red-700 border-red-600 hover:border-red-700 shadow-red-500/20"
+              >
+                {submittingReport ? 'Submitting...' : 'Submit Report'}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    )}
+    </>
   );
 };
 

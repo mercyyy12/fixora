@@ -4,22 +4,22 @@ const STEPS = [
   {
     num: '01',
     title: 'Post a job',
-    body: 'Describe the issue, set urgency, pin your location, and upload photos. Stored securely via Node.js and MongoDB.',
+    body: 'Describe the issue, set your budget, pin your location on the map, and upload photos. Everything is stored securely via MongoDB Atlas.',
   },
   {
     num: '02',
-    title: 'Smart matching',
-    body: 'Our Go microservice ranks the top technicians by distance, rating, and availability — using concurrent goroutines.',
+    title: 'Get matched',
+    body: 'Browse verified technicians filtered by skill, distance, and rating. The Go microservice serves the sorted list at high speed.',
   },
   {
     num: '03',
     title: 'Track in real time',
-    body: 'Accept a technician, then follow the job live via Socket.io — status updates and in-app chat included.',
+    body: 'Technicians accept jobs and update the status — from Assigned to In Progress to Completed — while you watch live via Socket.io.',
   },
   {
     num: '04',
-    title: 'Pay & review',
-    body: 'Pay through Razorpay or Stripe. Leave a rating — it feeds directly into the trust score algorithm.',
+    title: 'Rate & review',
+    body: 'Once the job is done, leave a rating for your technician. Ratings feed directly into their trust score visible to future homeowners.',
   },
 ]
 

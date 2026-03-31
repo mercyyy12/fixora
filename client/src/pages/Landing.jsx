@@ -7,8 +7,6 @@ import Hero             from '../components/landing/Hero'
 import HowItWorks       from '../components/landing/HowItWorks'
 import DashboardPreview from '../components/landing/DashboardPreview'
 import Features         from '../components/landing/Features'
-import MatchingEngine   from '../components/landing/MatchingEngine'
-import Reminders        from '../components/landing/Reminders'
 import MapSection       from '../components/landing/MapSection'
 import TechStack        from '../components/landing/TechStack'
 import Reviews          from '../components/landing/Reviews'
@@ -37,10 +35,6 @@ export default function LandingPage() {
             <DashboardPreview />
             <hr />
             <Features />
-            <hr />
-            <MatchingEngine />
-            <hr />
-            <Reminders />
             <hr />
             <MapSection />
             <hr />

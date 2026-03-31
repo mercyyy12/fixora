@@ -1,8 +1,8 @@
 /* ─── THEME VARIABLES ─────────────────────────────────────────── */
 
 :root {
-    --font-serif: Arial, sans-serif;
-    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-serif: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
 
     --radius: 6px;
     --radius-sm: 4px;

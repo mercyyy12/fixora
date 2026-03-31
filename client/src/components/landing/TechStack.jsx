@@ -29,12 +29,12 @@ const LAYERS = [
     dot:   '#7c6f5a',
     title: 'Microservice · Go',
     items: [
-      { name: 'Go + Gin / Fiber',   role: 'HTTP'       },
-      { name: 'Goroutines',         role: 'Concurrency'},
-      { name: '/match-technicians', role: 'Matching'   },
-      { name: '/schedule-optimize', role: 'Scheduling' },
-      { name: 'Cron Workers',       role: 'Reminders'  },
-      { name: 'Fly.io',             role: 'Deploy'     },
+      { name: 'Go + net/http',      role: 'HTTP'         },
+      { name: 'Goroutines',         role: 'Concurrency'  },
+      { name: '/api/admin/stats',   role: 'Analytics'    },
+      { name: '/api/technicians',   role: 'Listing'      },
+      { name: 'mongo-driver/go',    role: 'DB Access'    },
+      { name: 'rs/cors',            role: 'CORS'         },
     ],
   },
 ]
@@ -63,7 +63,7 @@ export default function TechStack() {
         <div className="section-header" ref={headerRef} data-reveal>
           <span className="label">Architecture</span>
           <h2>Tech stack</h2>
-          <p>A monorepo with a React frontend, Node.js API, and a Go microservice — deployed across Vercel, Render, and MongoDB Atlas.</p>
+          <p>A MERN stack with a dedicated Go microservice for analytics and technician listing — sharing the same MongoDB Atlas cluster.</p>
         </div>
 
         <div className="stack-grid" ref={gridRef} data-reveal="delay-1">

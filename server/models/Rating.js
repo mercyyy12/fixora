@@ -7,12 +7,12 @@ const ratingSchema = new mongoose.Schema(
       ref: 'Job',
       required: true,
     },
-    homeowner: {
+    rater: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    technician: {
+    ratedUser: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -32,16 +32,16 @@ const ratingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Prevent duplicate ratings per job
-ratingSchema.index({ job: 1, homeowner: 1 }, { unique: true });
+// Prevent duplicate ratings per job from same rater
+ratingSchema.index({ job: 1, rater: 1 }, { unique: true });
 
-// After saving a rating, update technician's average rating
-ratingSchema.statics.updateTechnicianRating = async function (technicianId) {
+// After saving a rating, update rated user's average rating
+ratingSchema.statics.updateUserRating = async function (userId) {
   const stats = await this.aggregate([
-    { $match: { technician: technicianId } },
+    { $match: { ratedUser: userId } },
     {
       $group: {
-        _id: '$technician',
+         _id: '$ratedUser',
         avgScore: { $avg: '$score' },
         count: { $sum: 1 },
       },
@@ -50,15 +50,20 @@ ratingSchema.statics.updateTechnicianRating = async function (technicianId) {
 
   const User = require('./User');
   if (stats.length > 0) {
-    await User.findByIdAndUpdate(technicianId, {
+    await User.findByIdAndUpdate(userId, {
       'rating.average': Math.round(stats[0].avgScore * 10) / 10,
       'rating.count': stats[0].count,
+    });
+  } else {
+    await User.findByIdAndUpdate(userId, {
+      'rating.average': 0,
+      'rating.count': 0,
     });
   }
 };
 
 ratingSchema.post('save', function () {
-  this.constructor.updateTechnicianRating(this.technician);
+  this.constructor.updateUserRating(this.ratedUser);
 });
 
 module.exports = mongoose.model('Rating', ratingSchema);

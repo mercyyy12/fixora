@@ -155,7 +155,7 @@
 }
 
 .hero h1 em {
-  font-style: italic;
+  font-style: normal;
   color: var(--accent);
 }
 
@@ -647,7 +647,7 @@
   color: var(--text-2);
   line-height: 1.7;
   margin-bottom: 20px;
-  font-style: italic;
+  font-style: normal;
 }
 
 .review-author {
