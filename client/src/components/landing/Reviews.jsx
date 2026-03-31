@@ -1,4 +1,5 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal'
+import { HiStar, HiHome, HiWrench } from 'react-icons/hi'
 
 const REVIEWS = [
   {
@@ -18,8 +19,8 @@ const REVIEWS = [
   {
     stars: 4,
     text: '"The maintenance reminders changed how I manage my home. I used to forget the geyser service every year — now Fixora handles it automatically."',
-    initials: 'SK',
-    name: 'Sanjay Karki',
+    initials: 'SM',
+    name: 'Suresh Malla',
     role: 'Homeowner · Lalitpur',
   },
 ]
@@ -62,7 +63,10 @@ export default function Reviews() {
                 <div className="review-avatar">{r.initials}</div>
                 <div>
                   <div className="review-name">{r.name}</div>
-                  <div className="review-role">{r.role}</div>
+                  <div className="review-role" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {r.role.includes('Homeowner') ? <HiHome className="w-3.5 h-3.5" /> : <HiWrench className="w-3.5 h-3.5" />}
+                    {r.role}
+                  </div>
                 </div>
               </div>
             </div>

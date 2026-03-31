@@ -91,7 +91,9 @@ export default function MatchingEngine() {
                       </div>
                     </div>
                     <div className="tech-meta">
-                      <div className="tech-score">{t.rating} &#9733;</div>
+                      <div className="tech-score" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        {t.rating} <HiStar className="w-3 h-3 text-amber-400" />
+                      </div>
                       <div className="tech-dist">{t.dist}</div>
                     </div>
                   </div>

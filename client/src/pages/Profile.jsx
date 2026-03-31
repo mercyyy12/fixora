@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { HiCamera, HiPencil, HiCheck, HiX, HiStar, HiBriefcase, HiPhone, HiFlag, HiShieldCheck, HiCheckCircle, HiXCircle } from 'react-icons/hi';
+import { HiCamera, HiPencil, HiCheck, HiX, HiStar, HiBriefcase, HiPhone, HiFlag, HiShieldCheck, HiCheckCircle, HiXCircle, HiHome, HiWrench } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
 import StarRating from '../components/StarRating';
@@ -94,7 +94,8 @@ const Profile = () => {
             <div className="flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="font-display font-bold text-xl text-ink">{user?.name}</h2>
-                <span className="badge bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 capitalize">
+                <span className="badge bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 capitalize flex items-center gap-1">
+                  {user?.role === 'homeowner' ? <HiHome className="w-3.5 h-3.5" /> : <HiWrench className="w-3.5 h-3.5" />}
                   {user?.role}
                 </span>
                 {isAdmin && (

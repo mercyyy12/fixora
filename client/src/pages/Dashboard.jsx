@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiPlus, HiClipboardList, HiCheckCircle, HiClock, HiUsers, HiRefresh, HiArrowRight, HiStar } from 'react-icons/hi';
+import { HiPlus, HiClipboardList, HiCheckCircle, HiClock, HiUsers, HiRefresh, HiArrowRight, HiStar, HiHome, HiWrench } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import API from '../utils/api';
@@ -118,7 +118,8 @@ const Dashboard = () => {
           <h1 className="font-display font-bold text-2xl text-ink">
             Good day, {user?.name?.split(' ')[0]}
           </h1>
-          <p className="text-ink-2 mt-0.5 text-sm capitalize">
+          <p className="text-ink-2 mt-0.5 text-sm capitalize flex items-center gap-1.5">
+            {isHomeowner ? <HiHome className="w-4 h-4 text-brand-500" /> : <HiWrench className="w-4 h-4 text-brand-500" />}
             {user?.role} Dashboard
           </p>
         </div>
